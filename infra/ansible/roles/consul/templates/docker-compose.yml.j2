@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  consul:
+    image: hashicorp/consul:1.16
+    container_name: consul
+    network_mode: host
+    restart: always
+    volumes:
+      - /opt/consul/data:/consul/data
+      - /opt/consul/config:/consul/config
+    command: >
+      agent
+      -server
+      -node={{ inventory_hostname }}
+      -bind={{ private_ip }}
+      -advertise={{ private_ip }}
+      -ui
+      -client=0.0.0.0
+      -bootstrap-expect=3
+      -data-dir=/consul/data
+{% for host in groups['consul'] %}
+      -retry-join={{ hostvars[host].private_ip }}
+{% endfor %}
+

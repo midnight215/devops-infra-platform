@@ -1,0 +1,6 @@
+alertmanager_version: "0.27.0"
+alertmanager_user: alertmanager
+alertmanager_bin_path: /usr/local/bin
+alertmanager_config_path: /etc/alertmanager
+alertmanager_data_path: /var/lib/alertmanager
+

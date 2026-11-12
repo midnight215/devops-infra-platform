@@ -1,0 +1,48 @@
+- name: Create Consul data directory
+  file:
+    path: /opt/consul/data
+    state: directory
+    mode: '0755'
+
+- name: Create Consul config directory
+  file:
+    path: /opt/consul/config
+    state: directory
+
+- name: Register node exporter in Consul
+  template:
+    src: node-exporter.json.j2
+    dest: /opt/consul/config/node-exporter.json
+
+- name: Create docker-compose file for Consul client
+  template:
+    src: docker-compose.yml.j3
+    dest: /opt/consul/docker-compose.yml
+
+- name: Run Consul client
+  command: docker compose up -d
+  args:
+    chdir: /opt/consul
+
+- name: Set latest service version in Consul
+  shell: >
+    docker exec consul consul kv put release_version {{ service_version }}
+  args:
+    executable: /bin/bash
+
+- name: Get service version from Consul
+  shell: >
+    docker exec consul consul kv get release_version
+  register: current_version
+  args:
+    executable: /bin/bash
+
+- name: Run template service container
+  docker_container:
+    name: template_service
+    image: "nginx:{{ current_version.stdout }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "8080:80"
+

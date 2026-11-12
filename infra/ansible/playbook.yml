@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - docker
+
+- hosts: consul
+  become: true
+  roles:
+    - consul
+
+- hosts: app,monitoring,logging,victoriametrics
+  become: true
+  roles:
+    - consul_client
+
+- hosts: all
+  become: true
+  roles:
+    - role: node_exporter
+
+- hosts: monitoring
+  become: true
+  roles:
+    - prometheus
+    - grafana
+    - alertmanager
+
+- hosts: victoriametrics
+  become: true
+  roles:
+    - victoriametrics
+
+- hosts: logging
+  become: true
+  roles:
+    - efk
+
+- hosts: all
+  become: true
+  roles:
+    - filebeat
+
+- hosts: sonarqube
+  become: true
+  roles:
+    - sonarqube
+
+- hosts: dmz-lb
+  become: true
+  roles:
+    - lb

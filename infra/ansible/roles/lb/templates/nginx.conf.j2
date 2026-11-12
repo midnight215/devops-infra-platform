@@ -1,0 +1,16 @@
+events { }
+
+http {
+    upstream apps {
+        server {{ hostvars['app1_lb'].private_ip }}:80;
+        server {{ hostvars['app2_lb'].private_ip }}:80;
+    }
+
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://apps;
+        }
+    }
+}
+

@@ -1,0 +1,26 @@
+---
+- name: Ensure SonarQube directory exists
+  file:
+    path: "{{ sonarqube_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy Docker Compose for SonarQube
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ sonarqube_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure Docker is installed
+  include_role:
+    name: docker
+
+- name: Start SonarQube via Docker Compose
+  command: docker compose up -d
+  args:
+    chdir: "{{ sonarqube_dir }}"
+

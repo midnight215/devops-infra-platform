@@ -1,0 +1,45 @@
+stages:
+  - build
+  - test
+  - fmt
+  - sonarqube
+
+default:
+  tags:
+    - deploy-runner
+
+before_script:
+  - docker info
+
+cache:
+  paths:
+    - go.sum
+    - go.mod
+    - vendor/
+
+build:
+  stage: build
+  tags:
+    - deploy-runner
+  script:
+    - docker compose build
+
+test:
+  stage: test
+  tags:
+    - deploy-runner
+  script:
+    - docker compose run --rm test
+
+fmt:
+  stage: fmt
+  tags:
+    - deploy-runner
+  script:
+    - docker compose run --rm fmt
+
+sonarqube:
+  stage: sonarqube
+  script:
+    - docker run --rm -v "$PWD:/usr/src" sonarsource/sonar-scanner-cli:5 sonar-scanner -Dsonar.projectKey=service -Dsonar.sources=. -Dsonar.token="$SONAR_TOKEN" -Dsonar.host.url="$SONAR_HOST_URL" -Dsonar.qualitygate.wait=true
+

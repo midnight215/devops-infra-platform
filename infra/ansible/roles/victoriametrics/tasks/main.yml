@@ -1,0 +1,41 @@
+---
+# 1️⃣ Создаём директорию для Victoriametrics
+- name: Ensure VictoriaMetrics directory exists
+  file:
+    path: /opt/victoriametrics
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# 2️⃣ Деплой docker-compose.yml
+- name: Deploy docker-compose.yml for VictoriaMetrics
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/victoriametrics/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+# 3️⃣ Деплой prometheus.yml для scrape (scrape_interval 90s)
+- name: Deploy VictoriaMetrics scrape config
+  template:
+    src: prometheus.yml.j2
+    dest: /opt/victoriametrics/prometheus.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+# 4️⃣ Останавливаем старый контейнер, если есть
+- name: Remove existing VictoriaMetrics container
+  docker_container:
+    name: victoriametrics
+    state: absent
+  ignore_errors: yes
+
+# 5️⃣ Запуск VictoriaMetrics через Docker Compose v2
+- name: Start VictoriaMetrics via Docker Compose
+  command: docker compose up -d
+  args:
+    chdir: /opt/victoriametrics
+

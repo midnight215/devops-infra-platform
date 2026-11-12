@@ -1,0 +1,64 @@
+- name: Create alertmanager user
+  user:
+    name: "{{ alertmanager_user }}"
+    shell: /bin/false
+    system: yes
+    create_home: no
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_user }}"
+    mode: "0755"
+  loop:
+    - "{{ alertmanager_config_path }}"
+    - "{{ alertmanager_data_path }}"
+
+- name: Download Alertmanager
+  get_url:
+    url: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+    dest: "/tmp/alertmanager.tar.gz"
+    mode: "0644"
+
+- name: Extract Alertmanager
+  unarchive:
+    src: "/tmp/alertmanager.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Install binaries
+  copy:
+    src: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/{{ item }}"
+    dest: "{{ alertmanager_bin_path }}/{{ item }}"
+    mode: "0755"
+    remote_src: yes
+  loop:
+    - alertmanager
+    - amtool
+
+- name: Alertmanager config
+  template:
+    src: alertmanager.yml.j2
+    dest: "{{ alertmanager_config_path }}/alertmanager.yml"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_user }}"
+    mode: "0644"
+
+- name: Systemd service
+  template:
+    src: alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+    mode: "0644"
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Alertmanager
+  systemd:
+    name: alertmanager
+    enabled: yes
+    state: started
+

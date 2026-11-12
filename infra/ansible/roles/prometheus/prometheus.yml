@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 90s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093
+
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: 'consul'
+    metrics_path: /v1/agent/metrics
+    params:
+      format: ['prometheus']
+    static_configs:
+      - targets:
+{% for host in groups['all'] %}
+        - "{{ hostvars[host].private_ip }}:8500"
+{% endfor %}
+
+  - job_name: 'node_exporter'
+    consul_sd_configs:
+{% for host in groups['all'] %}
+      - server: "{{ hostvars[host].private_ip }}:8500"
+        services:
+          - node-exporter
+{% endfor %}
+

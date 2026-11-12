@@ -1,0 +1,30 @@
+---
+- name: Create Filebeat directory
+  file:
+    path: /opt/filebeat
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy Filebeat docker-compose
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/filebeat/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Deploy Filebeat config
+  template:
+    src: filebeat.yml.j2
+    dest: /opt/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start Filebeat container
+  command: docker compose up -d
+  args:
+    chdir: /opt/filebeat
+

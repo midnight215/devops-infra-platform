@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "{{ sonarqube_port }}:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE={{ sonarqube_es_checks_disable }}
+      - SONAR_JDBC_USERNAME={{ sonar_jdbc_user }}
+      - SONAR_JDBC_PASSWORD={{ sonar_jdbc_password }}
+    restart: always
+

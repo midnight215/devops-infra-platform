@@ -1,0 +1,5 @@
+cloud_id           = "<your-cloud-id>"
+folder_id          = "<your-folder-id>"
+sa_key             = "/path/to/service-account-key.json"
+service_account_id = "<service-account-id>"
+ssh_key_path       = "~/.ssh/id_ed25519.pub"

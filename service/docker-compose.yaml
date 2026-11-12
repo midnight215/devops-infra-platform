@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+    image: demo-service-app
+    container_name: app
+    ports:
+      - "8080:8080"
+
+  test:
+    build:
+      context: .
+      target: builder
+    image: demo-service-test
+    container_name: test
+    command: go test ./cmd/server/...
+    volumes:
+      - .:/app
+    working_dir: /app
+
+  fmt:
+    build:
+      context: .
+      target: builder
+    image: demo-service-fmt
+    container_name: fmt
+    command: go fmt ./...
+    volumes:
+      - .:/app
+    working_dir: /app
+

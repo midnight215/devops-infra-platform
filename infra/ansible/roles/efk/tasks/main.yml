@@ -1,0 +1,57 @@
+---
+- name: Ensure Elasticsearch data directory exists
+  file:
+    path: /opt/efk/esdata
+    state: directory
+    owner: 1000
+    group: 1000
+    mode: "0755"
+
+- name: Ensure EFK directory exists
+  file:
+    path: /opt/efk
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy docker-compose.yml for EFK
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/efk/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Deploy Curator config
+  template:
+    src: curator.yml.j2
+    dest: /opt/efk/curator.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Deploy Curator actions
+  template:
+    src: actions.yml.j2
+    dest: /opt/efk/actions.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure Docker Compose v2 is installed
+  apt:
+    name: docker-compose-plugin
+    state: present
+    update_cache: yes
+
+- name: Start EFK stack
+  command: docker compose up -d
+  args:
+    chdir: /opt/efk
+
+- name: Run Curator (one-shot)
+  command: docker compose run --rm curator
+  args:
+    chdir: /opt/efk
+

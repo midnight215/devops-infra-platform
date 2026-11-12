@@ -1,0 +1,26 @@
+- name: Create Consul directories
+  file:
+    path: /opt/consul/data
+    state: directory
+    mode: '0755'
+
+- name: Create docker-compose file for Consul
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/consul/docker-compose.yml
+
+- name: Run Consul via Docker Compose
+  command: docker compose up -d
+  args:
+    chdir: /opt/consul
+
+- name: Create consul config dir
+  file:
+    path: /opt/consul/config
+    state: directory
+
+- name: Register node exporter in consul (server)
+  template:
+    src: node-exporter.json.j2
+    dest: /opt/consul/config/node-exporter.json
+

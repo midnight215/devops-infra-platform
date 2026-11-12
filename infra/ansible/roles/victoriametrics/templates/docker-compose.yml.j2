@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:v1.86.0
+    container_name: victoriametrics
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./data:/victoria-metrics-data
+      - ./prometheus.yml:/etc/victoriametrics/prometheus.yml
+    command:
+      -storageDataPath=/victoria-metrics-data
+      -retentionPeriod=6
+      -promscrape.config=/etc/victoriametrics/prometheus.yml
+

@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 90s
+
+scrape_configs:
+  - job_name: "node_exporter"
+    consul_sd_configs:
+{% for host in groups['all'] %}
+      - server: "{{ hostvars[host].private_ip }}:8500"
+        services:
+          - node-exporter
+{% endfor %}
+
+  - job_name: 'traefik'
+    static_configs:
+      - targets: ["<traefik_ip>:9102"]
+

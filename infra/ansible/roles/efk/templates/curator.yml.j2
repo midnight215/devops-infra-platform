@@ -1,0 +1,13 @@
+client:
+  hosts:
+    - elasticsearch
+  port: 9200
+  timeout: 30
+  use_ssl: false
+#  verify_certs: false
+
+logging:
+  loglevel: INFO
+  logformat: default
+  blacklist: ['elasticsearch']
+

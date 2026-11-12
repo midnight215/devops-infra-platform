@@ -1,0 +1,27 @@
+# Generated automatically by Terraform (resource "local_file" "ansible_inventory").
+# Example structure only.
+all:
+  children:
+    consul:
+      hosts:
+        consul1: { ansible_host: 203.0.113.11, private_ip: 10.20.1.11, ansible_user: ubuntu }
+        consul2: { ansible_host: 203.0.113.12, private_ip: 10.20.1.12, ansible_user: ubuntu }
+        consul3: { ansible_host: 203.0.113.13, private_ip: 10.20.1.13, ansible_user: ubuntu }
+    app:
+      hosts:
+        app1: { ansible_host: 203.0.113.21, private_ip: 10.20.1.21, ansible_user: ubuntu }
+    monitoring:
+      hosts:
+        monitoring1: { ansible_host: 203.0.113.31, private_ip: 10.20.1.31, ansible_user: ubuntu }
+    victoriametrics:
+      hosts:
+        vm1: { ansible_host: 203.0.113.32, private_ip: 10.20.1.32, ansible_user: ubuntu }
+    logging:
+      hosts:
+        logging1: { ansible_host: 203.0.113.41, private_ip: 10.20.1.41, ansible_user: ubuntu }
+    sonarqube:
+      hosts:
+        sonarqube: { ansible_host: 203.0.113.51, private_ip: 10.20.1.51, ansible_user: ubuntu }
+    dmz-lb:
+      hosts:
+        dmz-lb: { ansible_host: 203.0.113.61, private_ip: 10.20.0.61, ansible_user: ubuntu }

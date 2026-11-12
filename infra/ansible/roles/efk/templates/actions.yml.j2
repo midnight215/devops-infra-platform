@@ -1,0 +1,18 @@
+actions:
+  1:
+    action: delete_indices
+    description: Delete filebeat indices older than 14 days
+    options:
+      ignore_empty_list: True
+      continue_if_exception: False
+      disable_action: False
+    filters:
+      - filtertype: pattern
+        kind: prefix
+        value: filebeat-
+      - filtertype: age
+        source: name
+        direction: older
+        unit: days
+        unit_count: 14
+        timestring: '%Y.%m.%d'
